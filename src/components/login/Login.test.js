@@ -1,4 +1,4 @@
-import { fireEvent, render,screen } from "@testing-library/react"
+import { fireEvent, render,screen, waitFor } from "@testing-library/react"
 import Login from "./Login"
 
 test('username input should be rendered', () => {
@@ -91,5 +91,36 @@ test('loading should be rendered when clicked', () => {
     fireEvent.change(userInputEl, { target: {value: testValue}});
     fireEvent.change(passwordInputEl, { target: {value: testValue}});
     fireEvent.click(buttonInputEl)
-    expect(buttonInputEl).not.toHaveTextContent(/Please wait/i);
+    expect(buttonInputEl).toHaveTextContent(/Please wait/i);
+})
+
+test('loading should not be rendered after fetching', async () => {
+    render(<Login/>);
+    const buttonInputEl = screen.getByRole('button');
+    const userInputEl = screen.getByPlaceholderText(/username/i);
+    const passwordInputEl = screen.getByPlaceholderText(/password/i);
+
+    const testValue = 'test'
+
+    fireEvent.change(userInputEl, { target: {value: testValue}});
+    fireEvent.change(passwordInputEl, { target: {value: testValue}});
+    fireEvent.click(buttonInputEl)
+    await waitFor(() => 
+     expect(buttonInputEl).not.toHaveTextContent(/Please wait/i));
+})
+
+test('user should be rendered after fetching', async () => {
+    render(<Login/>);
+    const buttonInputEl = screen.getByRole('button');
+    const userInputEl = screen.getByPlaceholderText(/username/i);
+    const passwordInputEl = screen.getByPlaceholderText(/password/i);
+
+    const testValue = 'test'
+
+    fireEvent.change(userInputEl, { target: {value: testValue}});
+    fireEvent.change(passwordInputEl, { target: {value: testValue}});
+    fireEvent.click(buttonInputEl);
+
+    const userItem = await screen.findByText("John")
+   expect(userItem).toBeInTheDocument();
 })
