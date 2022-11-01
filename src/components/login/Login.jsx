@@ -1,6 +1,16 @@
 import axios from 'axios';
 import React, {useState} from 'react';
 
+jest.mock("axios", () => ({
+  __esModule: true,
+
+  default: {
+    get: () => ({
+      data:{id:1, name: "John"}
+    })
+  }
+}))
+
 
 function Login () {
   const [error, setError] = useState (false);
@@ -19,6 +29,7 @@ function Login () {
     } catch(err) {
         setError(true);
     }
+    setLoading(false);
   }
   return (
     <div className="container">
