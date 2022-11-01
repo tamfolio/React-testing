@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
 import axios from 'axios';
+import React, {useState} from 'react';
+
 
 function Login () {
   const [error, setError] = useState (false);
+  const [loading, setLoading] = useState (false);
   const [password, setPassword] = useState ('');
   const [username, setUsername] = useState ('');
   const [user, setUser] = useState ({});
@@ -10,8 +12,9 @@ function Login () {
 
   const handleClick = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try{
-      const {data} = axios.get("https://jsonplaceholder.typicode.com/users/1");
+      const {data} = await axios.get("https://jsonplaceholder.typicode.com/users/1");
       setUser(data);
     } catch(err) {
         setError(true);
@@ -19,6 +22,7 @@ function Login () {
   }
   return (
     <div className="container">
+      <span className="user">{user.name}</span>
       <form>
         <input
 
@@ -36,7 +40,9 @@ function Login () {
         <button 
         disabled={!username || !password}
         onClick={handleClick}
-        >Login</button>
+        >
+          {loading ? "Please wait" : "Login"}
+          </button>
         <span
           data-testid="error"
           style={{visibility: error ? 'visible' : 'hidden'}}
